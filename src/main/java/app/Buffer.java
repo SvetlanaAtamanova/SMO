@@ -19,6 +19,10 @@ public class Buffer {
         return requests;
     }
 
+    public Request get(int i){
+        return requests.get(i);
+    }
+
     private boolean findFreePlaceInBuffer(Request request, double currTime, int staticPointer) {
         for (int i = pointer; i < size; i++) {
             if (requests.get(i) == null) {

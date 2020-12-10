@@ -10,10 +10,10 @@
     <children>
         <Label layoutX="43.0" layoutY="94.0" text="количество источников" />
         <Label layoutX="43.0" layoutY="141.0" text="количество приборов" />
-        <TextField fx:id="bufferSizeText" layoutX="300.0" layoutY="237.0" text="12" />
+        <TextField fx:id="bufferSizeText" layoutX="300.0" layoutY="237.0" text="10" />
         <TextField fx:id="alpha" layoutX="300.0" layoutY="296.0" text="0.9" />
-        <TextField fx:id="sourceNumber" layoutX="300.0" layoutY="88.0" text="8" />
-        <TextField fx:id="deviceNumber" layoutX="300.0" layoutY="135.0" text="3" />
+        <TextField fx:id="sourceNumber" layoutX="300.0" layoutY="88.0" text="13" />
+        <TextField fx:id="deviceNumber" layoutX="300.0" layoutY="135.0" text="5" />
         <TextField fx:id="requestsNum" layoutX="300.0" layoutY="185.0" text="50" />
         <TextField fx:id="lambda" layoutX="300.0" layoutY="350.0" text="1.2" />
         <Label layoutX="41.0" layoutY="191.0" text="размер буфера" />

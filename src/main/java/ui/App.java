@@ -1,6 +1,8 @@
 package ui;
 
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 
@@ -49,6 +51,9 @@ public class App extends Application {
             primaryStage.setScene(new Scene(loader.load()));
             primaryStage.setTitle("Auto mode");
             primaryStage.show();
+            Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+            primaryStage.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+            primaryStage.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
 
             AutomodeController controller = loader.getController();
             controller.provideApp(this, mainController);
@@ -71,6 +76,9 @@ public class App extends Application {
         }
     }
 
+    public void closeMainWindow(){
+        primaryStage.close();
+    }
     public void showErrorAlert(String message) {
         final Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.initOwner(primaryStage);

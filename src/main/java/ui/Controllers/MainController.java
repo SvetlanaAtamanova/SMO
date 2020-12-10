@@ -2,6 +2,7 @@ package ui.Controllers;
 
 import app.Controller;
 import app.Config;
+import app.Main;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -12,6 +13,7 @@ import ui.App;
 public class MainController {
     private App app;
     private Controller controller;
+    private boolean mode;
 
     @FXML
     private TextField sourceNumber;
@@ -30,24 +32,28 @@ public class MainController {
 
     @FXML
     private RadioButton automode;
+    @FXML
+    private RadioButton stepmode;
 
     public void provideApp(App app, Controller controller) {
         this.app = app;
         this.controller = controller;
-
-        ToggleGroup modeGroup = new ToggleGroup();
-        //automode.setToggleGroup(modeGroup);
     }
 
     @FXML
     public void startModulating() {
         accessField();
+
     }
 
     private void accessField() {
+        ToggleGroup modeGroup = new ToggleGroup();
+        automode.setToggleGroup(modeGroup);
+        stepmode.setToggleGroup(modeGroup);
+
         if (sourceNumber.getText().isEmpty() || deviceNumber.getText().isEmpty()
                 || requestsNum.getText().isEmpty() || bufferSizeText.getText().isEmpty()
-                || alpha.getText().isEmpty() || beta.getText().isEmpty()) {
+                || alpha.getText().isEmpty() || beta.getText().isEmpty() || !(automode.isSelected() ^ stepmode.isSelected())) {
             app.showErrorAlert("Fill all fields");
             return;
         }
@@ -67,8 +73,17 @@ public class MainController {
             app.showErrorAlert("Some fields incorrect");
         }
 
-        controller.start();
-        app.showAutoModeWindow();
+
+
+        if (stepmode.isSelected()) {
+            app.closeMainWindow();
+            String[] args = new String[10];
+            Main.main(args);
+        }
+        else {
+            controller.start();
+            app.showAutoModeWindow();
+        }
     }
 
     public Controller getController() {

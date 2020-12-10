@@ -3,13 +3,13 @@
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="620.0" prefWidth="829.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Controllers.AutomodeController">
+<AnchorPane prefHeight="520.0" prefWidth="829.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Controllers.AutomodeController">
     <children>
-        <TableView fx:id="tableSources" layoutX="11.0" layoutY="14.0" prefHeight="422.0" prefWidth="808.0">
+        <TableView fx:id="tableSources" layoutX="11.0" layoutY="14.0" prefHeight="340.0" prefWidth="808.0">
             <columns>
                 <TableColumn fx:id="sourceColumn" prefWidth="83.59997272491455" text="Источники" />
                 <TableColumn fx:id="countColumn" prefWidth="111.20002746582031" text="Всего заявок" />
@@ -21,11 +21,20 @@
                 <TableColumn fx:id="disp5Col" prefWidth="116.79998779296875" text="Дисперсия T(обсл)" />
             </columns>
         </TableView>
-        <TableView fx:id="devicesTable" layoutX="14.0" layoutY="442.0" prefHeight="163.0" prefWidth="400.0">
+        <TableView fx:id="devicesTable" layoutX="33.0" layoutY="370.0" prefHeight="193.0" prefWidth="400.0">
             <columns>
                 <TableColumn fx:id="deviceColumn" prefWidth="94.19997882843018" text="Приборы" />
                 <TableColumn fx:id="coefColumn" prefWidth="307.40003967285156" text="Коэффициент использования" />
             </columns>
         </TableView>
+        <Label layoutX="493.0" layoutY="370.0" prefHeight="36.0" prefWidth="380.0" text="Буффер после окончания:" textOverrun="CLIP">
+            <font>
+                <Font size="17.0" />
+            </font></Label>
+        <TextArea fx:id="bufferText" layoutX="493.0" layoutY="409.0" prefHeight="76.0" prefWidth="370.0">
+            <font>
+                <Font size="19.0" />
+            </font>
+        </TextArea>
     </children>
 </AnchorPane>

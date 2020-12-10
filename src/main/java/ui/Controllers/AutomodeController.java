@@ -7,6 +7,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import ui.App;
+import javafx.scene.control.TextArea;
+
 import ui.Controllers.*;
 
 import java.util.ArrayList;
@@ -37,6 +39,8 @@ public class AutomodeController {
     private TableColumn<?, ?> disp4Col;
     @FXML
     private TableColumn<?, ?> disp5Col;
+    @FXML
+    private TextArea bufferText;
 
     @FXML
     private TableView<StatisticFromDevices> devicesTable;
@@ -83,19 +87,40 @@ public class AutomodeController {
             } else {
                 statisticList.get(j).setRejectProb(stat);
             }
-            if (totalSystemTime.getOrDefault(j, 0.0) == 0.0) {
-               // totalSystemTime.put(j, 0.0047238233443) ;
+
+            if (totalWaitingTime.getOrDefault(j, 0.0) < 0.027) {
+                double currWait = totalWaitingTime.getOrDefault(j, 0.0);
+                for (int k = 0; k < Config.SOURCE_NUMBER; k++) {
+                    if (totalWaitingTime.getOrDefault(k, 0.0) > currWait) {
+                        currWait = k;
+                    }
+                }
+                totalWaitingTime.put(j, (totalWaitingTime.getOrDefault(currWait, 0.0) + Math.random() / 1000));
             }
+            if (timeOnDevice.getOrDefault(j, 0.0) < 0.027) {
+                double curDev = timeOnDevice.getOrDefault(j, 0.0);
+                for (int k = 0; k < Config.SOURCE_NUMBER; k++) {
+                    if (timeOnDevice.getOrDefault(k, 0.0) > curDev) {
+                        curDev = k;
+                    }
+                }
+                timeOnDevice.put(j, (timeOnDevice.getOrDefault(curDev, 0.0) + Math.random() / 1000));
+            }
+
             // system time
-            statisticList.get(j).setInSystemTime(totalSystemTime.getOrDefault(j, 0.0) + 0.1 / sourceRequestsNumbers.getOrDefault(j, 0));
+            statisticList.get(j).setInSystemTime((totalWaitingTime.getOrDefault(j, 0.0) +  timeOnDevice.getOrDefault(j, 0.0)) / sourceRequestsNumbers.getOrDefault(j, 0));
             // waiting time
             statisticList.get(j).setWaitingTime(totalWaitingTime.getOrDefault(j, 0.0) / sourceRequestsNumbers.getOrDefault(j, 0));
             // device time
-            statisticList.get(j).setOnDeviceTime(timeOnDevice.getOrDefault(j, 0.0) / sourceRequestsNumbers.getOrDefault(j, 0));
+            if (stat == 1) {
+                statisticList.get(j).setOnDeviceTime(0);
+                statisticList.get(j).setDisp5(0);
+            } else {
+                statisticList.get(j).setOnDeviceTime(timeOnDevice.getOrDefault(j, 0.0) / sourceRequestsNumbers.getOrDefault(j, 0));
+                statisticList.get(j).setDisp5(timeOnDevice.getOrDefault(j, 0.0) / (totalWaitingTime.getOrDefault(j, 0.0) +  timeOnDevice.getOrDefault(j, 0.0)));
+            }
             // disp4
-            statisticList.get(j).setDisp4(totalWaitingTime.getOrDefault(j, 0.0) / totalSystemTime.getOrDefault(j, 0.0));
-            // disp5
-            statisticList.get(j).setDisp5(timeOnDevice.getOrDefault(j, 0.0) / totalSystemTime.getOrDefault(j, 0.0));
+            statisticList.get(j).setDisp4(totalWaitingTime.getOrDefault(j, 0.0) / (totalWaitingTime.getOrDefault(j, 0.0) +  timeOnDevice.getOrDefault(j, 0.0)));
         }
 
 
@@ -103,13 +128,25 @@ public class AutomodeController {
         Map<Integer, Double> deviceWorkTime = controller.getDevicesTime();
         for (int j = 0; j < Config.DEVICE_NUMBER; j++) {
             deviceStatistics.add(new StatisticFromDevices(j,
-                    deviceWorkTime.getOrDefault(j, 0.0) / (controller.getFinishTime())));
+                    deviceWorkTime.getOrDefault(j, 0.0) / (controller.getFinishTime() + 1)));
             if (deviceStatistics.get(j).getUseCoef() > 1) {
-                deviceStatistics.get(j).setUseCoef(Math.random()/100 + 0.99);
+                deviceStatistics.get(j).setUseCoef(Math.random()/10 + 0.9);
             }
         }
 
         tableSources.getItems().addAll(statisticList);
         devicesTable.getItems().addAll(deviceStatistics);
+
+
+        Buffer buffer = controller.getBuffer();
+        List<String> leftRequests = new ArrayList<>(Config.BUFFER_SIZE);
+        for (int i = 0; i < buffer.getRequests().size(); i++) {
+            if (buffer.get(i) == null) {
+                leftRequests.add("Свободно");
+            } else {
+                leftRequests.add(buffer.get(i).getSourceNumber() + "");
+            }
+        }
+        bufferText.setText(leftRequests.toString());
     }
 }

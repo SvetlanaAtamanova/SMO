@@ -17,6 +17,7 @@ public class Controller {
     private int requestsNumber;
     private double currentTime;
     private double finishTime;
+    private int devicePointer;
 
     private Buffer buffer;
     private RequestManager sourceManager;
@@ -55,8 +56,6 @@ public class Controller {
         sourceManager = new RequestManager(sourceCount, alpha, beta);
         deviceManager = new SelectionManager(deviceCount, Config.LAMBDA);
         buffer = new Buffer(bufferSize);
-        System.out.println(bufferSize);
-
 
     }
 
@@ -70,7 +69,7 @@ public class Controller {
                         + " освободился в " + doneReq.getDoneTime() +
                         ", номер источника заявки - " + doneRequest.getSourceNumber());
                 totalSystemTime.put(doneRequest.getSourceNumber(), totalSystemTime.getOrDefault(doneRequest.getSourceNumber(), 0.0)
-                        + doneReq.getTimeOfWork());
+                        + doneReq.getDoneTime());
             }
             if (!buffer.isEmpty()) {
                 Request requestForDevice = buffer.getLatestRequest();
@@ -86,8 +85,14 @@ public class Controller {
                         sourceWaitingTime.getOrDefault(requestForDevice.getSourceNumber(), 0.0) + (timeToPlace - requestForDevice.getGenerationTime()));
                 devicesTime.put(deviceNumber, devicesTime.getOrDefault(deviceNumber, 0.0)
                         + deviceManager.getDevice(deviceNumber).getDoneTime() - timeToPlace);
-                infoCollector.accept("Заявка от источника номер " + requestForDevice.getSourceNumber() +
-                        " загружена на прибор номер " + deviceNumber);
+                infoCollector.accept("Заявка от источника " + requestForDevice.getSourceNumber() +
+                        " загружена на прибор " + deviceNumber);
+                deviceNumber++;
+                if (deviceNumber == Config.DEVICE_NUMBER) {
+                    devicePointer = 0;
+                } else {
+                    devicePointer = deviceNumber;
+                }
             }
 
 
@@ -104,7 +109,7 @@ public class Controller {
 
 
             for (final Request nextRequest : nextRequests) {
-                infoCollector.accept("источник номер " + nextRequest.getSourceNumber() + " создал заявку в " + nextRequest.getGenerationTime());
+                infoCollector.accept("источник " + nextRequest.getSourceNumber() + " создал заявку в " + nextRequest.getGenerationTime());
                 sourceRequestsCount.put(nextRequest.getSourceNumber(), sourceRequestsCount.getOrDefault(nextRequest.getSourceNumber(), 0) + 1);
 
                 Pair<Integer, Integer> statusPair = buffer.put(nextRequest, currentTime);
@@ -113,7 +118,7 @@ public class Controller {
                     infoCollector.accept("Заявка добавлена без удалений");
                 } else if (status == 1)  {
                     sourceRejectedCount.put(nextRequest.getSourceNumber(), sourceRejectedCount.getOrDefault(nextRequest.getSourceNumber(), 0) + 1);
-                    infoCollector.accept("Заявка попала в буфер, сначала удалив другую");
+                    infoCollector.accept("Заявка попала в буфер, сначала удалив заявку от источника  " + statusPair.getSecond());
                     replaced++;
                 } else {
                     sourceRejectedCount.put(nextRequest.getSourceNumber(), sourceRejectedCount.getOrDefault(nextRequest.getSourceNumber(), 0) + 1);
@@ -130,7 +135,7 @@ public class Controller {
 
         System.out.println(sourceRejectedCount);
         System.out.println("Всего заявок было выбито из буфера: " + replaced);
-        System.out.println("Всего отказанных заявок не попало в буффер: " + rejected);
+        //System.out.println("Всего отказанных заявок не попало в буффер: " + rejected);
         int sumTotal = 0;
         int sumRejected = 0;
         for (int i = 0; i < sourceCount; i++) {
@@ -171,6 +176,8 @@ public class Controller {
         }
 
         infoCollector.accept("Указатель буффера на " + buffer.getIndexPointer() + " элементе");
+        infoCollector.accept("Указатель на приборе " +  devicePointer);
+
     }
 
     public Map<Integer, Integer> getSourceRequestsCount() {
@@ -195,5 +202,8 @@ public class Controller {
 
     public Map<Integer, Double> getDevicesTime() {
         return devicesTime;
+    }
+    public Buffer getBuffer() {
+        return buffer;
     }
 }
