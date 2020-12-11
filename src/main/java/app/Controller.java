@@ -1,9 +1,6 @@
 package app;
 
-import java.util.Random;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -105,25 +102,25 @@ public class Controller {
             Pair<Double, List<Request>> nextRequestPair = sourceManager.getNextRequest(currentTime);
             List<Request> nextRequests = nextRequestPair.getSecond();
             currentTime += nextRequestPair.getFirst();
-            //infoCollector.accept("источник номер " + nextRequests.get(i).getSourceNumber() + " создал заявку в " + nextRequests.get(i).getGenerationTime());
 
 
             for (final Request nextRequest : nextRequests) {
-                infoCollector.accept("источник " + nextRequest.getSourceNumber() + " создал заявку в " + nextRequest.getGenerationTime());
+                infoCollector.accept("источник " + nextRequest.getSourceNumber() + " создал заявку в " + nextRequest.getGenerationTime() + " ее номер:  " + nextRequest.getNumber());
                 sourceRequestsCount.put(nextRequest.getSourceNumber(), sourceRequestsCount.getOrDefault(nextRequest.getSourceNumber(), 0) + 1);
+                //infoCollector.accept("источник номер " + nextRequests.get(i).getSourceNumber() + " создал заявку в " + nextRequests.get(i).getGenerationTime());
 
-                Pair<Integer, Integer> statusPair = buffer.put(nextRequest, currentTime);
+                Pair<Integer, ArrayList<Integer>> statusPair = buffer.put(nextRequest, currentTime);
                 int status = statusPair.getFirst();
                 if (status == 0) {
                     infoCollector.accept("Заявка добавлена без удалений");
                 } else if (status == 1)  {
                     sourceRejectedCount.put(nextRequest.getSourceNumber(), sourceRejectedCount.getOrDefault(nextRequest.getSourceNumber(), 0) + 1);
-                    infoCollector.accept("Заявка попала в буфер, сначала удалив заявку от источника  " + statusPair.getSecond());
+                    infoCollector.accept("Заявка попала в буфер, сначала удалив заявку от источника  " + statusPair.getSecond().get(0) + " и ее номер "  + statusPair.getSecond().get(1));
                     replaced++;
                 } else {
                     sourceRejectedCount.put(nextRequest.getSourceNumber(), sourceRejectedCount.getOrDefault(nextRequest.getSourceNumber(), 0) + 1);
                     infoCollector.accept("Заявка ушла в отказ");
-                    sourceRejectedCount.put(statusPair.getSecond(), sourceRejectedCount.getOrDefault(statusPair.getSecond(), 0) + 1);
+                    sourceRejectedCount.put(statusPair.getSecond().get(0), sourceRejectedCount.getOrDefault(statusPair.getSecond(), 0) + 1);
                     rejected++;
                 }
 

@@ -39,19 +39,15 @@ public class SelectionManager {
         int staticPointer = pointer;
         for (int i = pointer; i < devices.length; i++) {
             if (devices[i].isFree()) {
-                //incrementPointer();
                 pointer = i;
                 return i;
             }
-           // incrementPointer();
         }
         for (int i = 0; i < staticPointer; i++) {
             if (devices[i].isFree()) {
-                //incrementPointer();
                 pointer = i;
                 return i;
             }
-           // incrementPointer();
         }
 
         throw new IllegalStateException("There is no free devices on invocation");

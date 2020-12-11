@@ -14,7 +14,7 @@
         <TextField fx:id="bufferSizeText" layoutX="300.0" layoutY="187.0" text="10" />
         <TextField fx:id="alpha" layoutX="300.0" layoutY="213.0" text="0.8" />
         <TextField fx:id="sourceNumber" layoutX="300.0" layoutY="109.0" text="12" />
-        <TextField fx:id="deviceNumber" layoutX="300.0" layoutY="135.0" text="7" />
+        <TextField fx:id="deviceNumber" layoutX="300.0" layoutY="135.0" text="5" />
         <TextField fx:id="requestsNum" layoutX="300.0" layoutY="161.0" text="50" />
         <TextField fx:id="beta" layoutX="300.0" layoutY="239.0" text="1.1" />
         <TextField fx:id="lambda" layoutX="300.0" layoutY="264.0" text="1" />

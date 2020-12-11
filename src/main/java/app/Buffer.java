@@ -45,29 +45,31 @@ public class Buffer {
         return false;
     }
 
-    public Pair<Integer, Integer>  put(Request request, double currTime) {
+    public Pair<Integer, ArrayList<Integer>>  put(Request request, double currTime) {
+        ArrayList<Integer> info = new ArrayList<Integer>();
+        info.add(-1);
         if (requests.size() < size) {
             requests.add(pointer, request);
             incrementPointer();
-            return new Pair<>(0, -1);
+            return new Pair<>(0, info);
         } else {
             int staticPointer = pointer;
             if (findFreePlaceInBuffer(request, currTime, staticPointer)) {
-                return new Pair<>(0, -1);
+                return new Pair<>(0, info);
             }
             else {
-                int  rejectedSourceNumber = removeOldestRequest();
+                ArrayList<Integer>  rejectedReqInfo = removeOldestRequest();
                 pointer = staticPointer;
                 if (findFreePlaceInBuffer(request, currTime, staticPointer)) {
-                    return new Pair<>(1, rejectedSourceNumber);
+                    return new Pair<>(1, rejectedReqInfo);
                 }
             }
 
         }
-        return new Pair<>(2, request.getSourceNumber());
+        return new Pair<>(2, info);
     }
 
-    private int removeOldestRequest(){
+    private ArrayList<Integer> removeOldestRequest(){
         int currIndex = 0;
         for (int i = 1; i < size; i++) {
             if (requests.get(i).getTimeInBuffer() < requests.get(currIndex).getTimeInBuffer()) {
@@ -75,8 +77,12 @@ public class Buffer {
             }
         }
         int sourceNumber = requests.get(currIndex).getSourceNumber();
+        int reqNum = requests.get(currIndex).getNumber();
+        ArrayList<Integer> reqInfo = new ArrayList<Integer>();
+        reqInfo.add(sourceNumber);
+        reqInfo.add(reqNum);
         requests.set(currIndex, null);
-        return sourceNumber;
+        return reqInfo;
 }
 
     public Request getLatestRequest(){

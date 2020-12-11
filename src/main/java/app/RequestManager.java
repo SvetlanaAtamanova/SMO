@@ -8,6 +8,7 @@ public class RequestManager {
     private final Source[] sources;
     private final Request[] sourcesRequests;
     private final double[] timesToWait;
+    private int counter = 0;
 
     public RequestManager(final int amountOfSources,
                              final double alpha,
@@ -64,7 +65,8 @@ public class RequestManager {
     private void generateRequestsIfNeed(final double currentTime) {
         for (int i = 0; i < sources.length; ++i) {
             if (timesToWait[i] <= 0) {
-                final Pair<Double, Request> generatedRequest = sources[i].generate(currentTime);
+                final Pair<Double, Request> generatedRequest = sources[i].generate(currentTime, counter);
+                counter++;
                 final double timeToWait = generatedRequest.getFirst();
                 final Request newRequest = generatedRequest.getSecond();
                 sourcesRequests[i] = newRequest;
@@ -72,5 +74,6 @@ public class RequestManager {
             }
         }
     }
+
 
 }

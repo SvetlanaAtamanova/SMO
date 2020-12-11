@@ -17,9 +17,9 @@ public class Source {
         this.beta = beta;
     }
 
-    public Pair<Double, Request> generate(final double currentTime) {
+    public Pair<Double, Request> generate(final double currentTime, int counter) {
         final double nextRequestTime = getNextRequestTime();
-        return new Pair<>(nextRequestTime, new Request(number, nextRequestNumber++, currentTime));
+        return new Pair<>(nextRequestTime, new Request(number, counter, currentTime));
     }
 
     private double getNextRequestTime() {

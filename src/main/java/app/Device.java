@@ -11,8 +11,6 @@ public class Device {
     private double timeBeg;
     private double lambda;
 
-    private static int counter = 0;
-
     public Device(final int number, double lambda) {
         this.number = number;
         this.timeBeg = -1;
@@ -34,7 +32,6 @@ public class Device {
         this.requestOnDevice = request;
         this.timeBeg = currentTime;
         this.timeProcessing = currentTime + timeToDo;
-        //System.out.println("Execute " + counter++);
     }
 
     public void clearAfterDoneProcessing() {
